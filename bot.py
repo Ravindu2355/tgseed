@@ -1,5 +1,5 @@
 import os
-import time
+import time ,json
 from pyrogram import Client, filters ,types
 from config import Config
 from tor.seed import SeedrClient
@@ -20,6 +20,7 @@ seedr = SeedrClient(
 )
 if seedr.login():
     l.info("Successfully loged into seedr account!...")
+    l.info("account settings: ",json.dumps(seedr.get_account_settings()))
 else:
     l.info("Sorry cant log into seedr account")
 # Run the bot
