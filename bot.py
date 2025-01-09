@@ -18,7 +18,10 @@ seedr = SeedrClient(
     Config.seedr_email,
     Config.seedr_pw
 )
-l.info("seedr client and pyrogram client was created")
+if seedr.login():
+    l.info("Successfully loged into seedr account!...")
+else:
+    l.info("Sorry cant log into seedr account")
 # Run the bot
 if __name__ == '__main__':
     l.info("bot client starting...")
