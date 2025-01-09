@@ -22,3 +22,10 @@ def generate_thumbnail(video_path, thumbnail_path):
     except Exception as e:
         print(f"Error generating thumbnail: {e}")
         return None
+
+def humanr_size(size, decimal_places=2):
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']:
+        if size < 1024:
+            return f"{size:.{decimal_places}f} {unit}"
+        size /= 1024
+
