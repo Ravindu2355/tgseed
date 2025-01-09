@@ -1,5 +1,5 @@
 from pyrogram import Client, filters, types
-from func.simples import mention_user
+from plugins.func.simples import mention_user
 
 
 @Client.on_message(filters.command("start"))
