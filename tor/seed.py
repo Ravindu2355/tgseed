@@ -25,14 +25,14 @@ class SeedrClient:
                 self.email = data.get("email")
                 for name, value in self.cookies.items():
                     self.session.cookies.set(name, value)
-            print("Session loaded from file.")
+            l.info("Session loaded from file.")
 
     def save_session(self):
         """Save session cookies to a file."""
         with open(self.CONFIG_FILE, "w") as file:
             data = {"email": self.email, "cookies": self.cookies}
             json.dump(data, file)
-            print("Session saved to file.")
+            l.info("Session saved to file.")
 
     def check_session_valid(self):
         """Check if the session is still valid."""
@@ -45,11 +45,11 @@ class SeedrClient:
         If a valid session exists, reuse it.
         """
         if self.cookies and self.check_session_valid():
-            print(f"Using existing session for {self.email}.")
+            l.info(f"Using existing session for {self.email}.")
             return True
 
         if not self.email or not self.password:
-            print("Email and password are required to log in.")
+            l.info("Email and password are required to log in.")
             return False
 
         url = f"{self.BASE_URL}/auth/login"
@@ -63,11 +63,11 @@ class SeedrClient:
         response = self.session.post(url, headers=headers, data=json.dumps(data))
         response_data = response.json()
         if response_data.get("success", False):
-            print(f"Logged in as {self.email}.")
+            l.info(f"Logged in as {self.email}.")
             self.cookies = {cookie.name: cookie.value for cookie in self.session.cookies}
             self.save_session()
             return True
-        print("Login failed.")
+        l.info("Login failed.")
         return False
 
     def logout(self):
@@ -79,14 +79,14 @@ class SeedrClient:
         response = self.session.post(url, headers=headers)
         
         if response.status_code == 200:
-            print(f"Logged out successfully.")
+            l.info(f"Logged out successfully.")
             # Clear session cookies after logout
             self.session.cookies.clear()
             if os.path.exists(self.CONFIG_FILE):
                 os.remove(self.CONFIG_FILE)  # Remove the session file
             return True
         else:
-            print("Logout failed.")
+            l.info("Logout failed.")
             return False
 
     def get_account_settings(self):
