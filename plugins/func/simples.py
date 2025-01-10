@@ -2,7 +2,7 @@ import urllib.parse
 from moviepy.editor import VideoFileClip
 import os
 import shutil
-
+from lg import logger as l
 
 def url_decode(encoded_string):
     return urllib.parse.unquote(encoded_string)
@@ -23,7 +23,7 @@ def generate_thumbnail(video_path, thumbnail_path):
         video.save_frame(thumbnail_path, t=1.0)  # Save thumbnail at 1 second
         return thumbnail_path
     except Exception as e:
-        print(f"Error generating thumbnail: {e}")
+        l.info(f"Error generating thumbnail: {e}")
         return None
 
 def humanr_size(size, decimal_places=2):
@@ -36,8 +36,9 @@ def humanr_size(size, decimal_places=2):
 def clean_dir(directory):
     try:
         if not os.path.exists(directory):
-            print(f"Directory '{directory}' does not exist.")
-            return False
+            os.makedirs(directory,exist_ok=True)
+            l.info(f"Directory '{directory}' does not exist.But created...")
+            return True
 
         for item in os.listdir(directory):
             item_path = os.path.join(directory, item)
@@ -50,5 +51,5 @@ def clean_dir(directory):
         return True
 
     except Exception as e:
-        print(f"Error cleaning directory '{directory}': {e}")
+        l.info(f"Error cleaning directory '{directory}': {e}")
         return False
