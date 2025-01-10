@@ -18,3 +18,7 @@ class Config(object):
   seedr_pw = os.getenv("seedrPw")
 
   dl_dir = os.getenv("dldir","dl")
+
+  sizelimit = int(os.getenv("sizelimit",2147483648))
+
+
