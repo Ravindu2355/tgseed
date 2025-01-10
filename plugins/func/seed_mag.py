@@ -1,4 +1,4 @@
-import asyncio, time
+import asyncio, time, json
 from bot import seedr
 from plugins.func.simples import humanr_size, clean_dir
 from plugins.func.dl import download_file
@@ -17,7 +17,8 @@ async def seed_file(maglink, client, msg):
         ls_t = time.time()
         ls_msg = ''
         while True:
-            jso=seedr.get_folder_items()
+            jso = seedr.get_folder_items()
+            await msg.reply(f"{json.dumps(jso)}")
             folders = jso["folders"]
             fol = next((fol for fol in folders if int(fol["id"]) == folder_id), None)
             
@@ -29,12 +30,12 @@ async def seed_file(maglink, client, msg):
                 
                 upT = (
                 f"**Seeding...**\n\n"
-                f"**Name:** {tor['name']}\n"
-                f"**Progress:** {tor['progress']}%\n"
-                f"**Leechers:** {tor['leechers']}\n"
-                f"**Seeders:** {tor['seeders']}\n"
-                f"**Size:** {humanr_size(tor['size'])}\n\n"
-                f"**Warnings:** {tor.get('warnings', 'None')}"
+                f"  **Name:** {tor['name']}\n"
+                f"  **Progress:** {tor['progress']}%\n"
+                f"  **Leechers:** {tor['leechers']}\n"
+                f"  **Seeders:** {tor['seeders']}\n"
+                f"  **Size:** {humanr_size(tor['size'])}\n\n"
+                f"  **Warnings:** {tor.get('warnings', 'None')}"
                 )
             
                 t_diff = time.time() - ls_t
@@ -43,7 +44,7 @@ async def seed_file(maglink, client, msg):
                     ls_t = time.time()
                     ls_msg = upT
             
-            await asyncio.sleep(3)  # Await is mandatory in async functions
+            await asyncio.sleep(5)  # Await is mandatory in async functions
         infol = seedr.get_folder_items(folder_id)
         if not infol:
             await msg.edit_text(f"**Error!**\nSorry cant get folder data id:{folder_id}")
