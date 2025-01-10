@@ -10,7 +10,7 @@ def url_decode(encoded_string):
 def url_encode(string):
     return urllib.parse.quote(string)
 
-def mention_user(message:Message):
+def mention_user(message):
     user = message.from_user
     user_name = user.first_name
     user_id = user.id
