@@ -4,6 +4,8 @@ import aiohttp
 import asyncio
 from pyrogram.errors import FloodWait
 from config import Config
+from plugins.func.simples import humanr_size
+
 
 def calculate_eta(total_size, downloaded_size, speed):
     if speed > 0:
@@ -48,8 +50,8 @@ async def download_file(client, msg, url, file_name, save_dir=Config.dl_dir, upd
                         f"**Downloading...**\n\n"
                         f"**File Name:** `{file_name}`\n"
                         f"**Downloaded:** {downloaded_size / total_size * 100:.2f}%\n"
-                        f"**Size:** {human_readable_size(downloaded_size)} / {human_readable_size(total_size)}\n"
-                        f"**Speed:** {human_readable_size(speed)}/s\n"
+                        f"**Size:** {humanr_size(downloaded_size)} / {humanr_size(total_size)}\n"
+                        f"**Speed:** {humanr_size(speed)}/s\n"
                         f"**ETA:** {eta}s\n"
                     )
 
