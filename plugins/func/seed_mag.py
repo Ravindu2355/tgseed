@@ -23,6 +23,7 @@ async def seed_file(maglink, client, msg):
             fol = next((fol for fol in folders if int(fol["id"]) == folder_id), None)
             
             if fol:# If folder is found, break the loop
+                await msg.reply(f"Found: {json.dumps(fol)}")
                 break
 
             if jso['torrents']:
@@ -44,7 +45,7 @@ async def seed_file(maglink, client, msg):
                     ls_t = time.time()
                     ls_msg = upT
             
-            await asyncio.sleep(5)  # Await is mandatory in async functions
+            await asyncio.sleep(10)  # Await is mandatory in async functions
         infol = seedr.get_folder_items(folder_id)
         if not infol:
             await msg.edit_text(f"**Error!**\nSorry cant get folder data id:{folder_id}")
