@@ -96,8 +96,8 @@ async def seed_file(maglink, client, msg):
         else:
             await msg.edit_text("**Sorry Cannot find files!...**")
         seedr.delete([{
-                type:"folder",
-                id:folder_id
+                "type":"folder",
+                "id":folder_id
             }])
         
                     
