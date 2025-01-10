@@ -18,7 +18,8 @@ def identify_link_type(text):
     # Check if it's a torrent link
     elif re.search(torrent_pattern, text, re.IGNORECASE):
         return "torrent"
-    
+    elif "http" in text and "1337x" in text and "torrent" in text:
+        return "torrent"
     return None
 
 # Message handler
