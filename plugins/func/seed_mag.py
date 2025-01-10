@@ -103,4 +103,5 @@ async def seed_file(maglink, client, msg):
                 "id":folder_id
             }])
         
-                    
+    else:
+        await msg.edit_text("Sorry torrent not added to seeding client")
