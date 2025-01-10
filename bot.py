@@ -22,7 +22,7 @@ seedr = SeedrClient(
 )
 if seedr.login():
     l.info("Successfully loged into seedr account!...")
-    l.info(f"account settings: {json.dumps(seedr.get_account_settings())}")
+    #l.info(f"account settings: {json.dumps(seedr.get_account_settings())}")
 else:
     l.info("Sorry cant log into seedr account")
 # Run the bot
