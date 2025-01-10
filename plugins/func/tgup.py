@@ -62,7 +62,7 @@ async def upload_video(client, msg, file_path, thumb_path=None):
     if not thumb_path:
       await msg.edit_text("**Genarating Thumbnail...!**")
       thumb_path = f"{file_path}.jpg"
-      generate_thumbnail(video_path, thumbnail_path)
+      generate_thumbnail(file_path, thumb_path)
     # Extract video duration using MoviePy
     try:
         video_clip = VideoFileClip(file_path)
