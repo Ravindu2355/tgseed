@@ -66,17 +66,10 @@ async def seed_file(maglink, client, msg):
                         f"  **DLURL:** {dlr['url']}"
                         f" **It will upload soon**"
                     )
-                    if 'thumb' in file:
-                       prmsg = await client.send_photo(
-                            chat_id=msg.chat.id,
-                            photo=file['thumb'],
-                            caption=fmsg
-                        )
-                    else:
-                       prmsg = await client.send_message(
+                    prmsg = await client.send_message(
                             chat_id=msg.chat.id,
                             text=fmsg
-                       )
+                            )
                     if file["size"] >= Config.sizelimit:
                         await client.send_message(
                             chat_id=msg.chat.id,
