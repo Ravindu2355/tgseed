@@ -2,6 +2,8 @@ from pyrogram import Client, filters, types
 from plugins.func.simples import mention_user
 from plugins.autherHandle import is_auth
 import re
+from bot import seedr
+from plugins.func.seed_mag import seed_file
 
 # Function to identify and classify the type of link
 def identify_link_type(text):
@@ -28,8 +30,14 @@ async def detect_torrent_or_magnet(client, message):
       return
     link_type = identify_link_type(text)
     if link_type == "magnet":
-        
+        msg = await message.reply("Magnet Link found Proccesing!...")
+        await seed_file(text, client, msg)
     elif link_type == "torrent":
-        
+        msg = await message.reply("Torrent Link found Proccesing!...")
+        magt = seedr.fetch_torrent(text)
+        if magt["success"]:
+            await seed_file(msgt["magnet"], client, msg)
+        else:
+            await msg.edit_text("Sorry cannot extract Magnet links from it!...")
     else:
         await message.reply("No torrent or magnet link detected.")
