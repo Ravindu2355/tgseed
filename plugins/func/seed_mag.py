@@ -2,7 +2,7 @@ import asyncio, time
 from bot import seedr
 from plugins.func.simples import humanr_size
 
-async def seed_file(maglink, msg):
+async def seed_file(maglink, client, msg):
     if not seedr.check_session():
         await msg.edit_text("Sorry, Seedr session was invalid!...")
         return
@@ -42,5 +42,32 @@ async def seed_file(maglink, msg):
         if not infol:
             await msg.edit_text(f"**Error!**\nSorry cant get folder data id:{folder_id}")
             return
-        
-    
+        if infol['files'] and len(infol['files']) >= 1:
+            for file in infol['files']:
+                dlr = seedr.get_download_url(file['id'])
+                if not dlr:
+                    await msg.edit_text(f"Sorry cannot get download links for this file!\n\nName : {file['name']}")
+                    return
+                if dlr and dlr['success'] == True:
+                    fmsg = (
+                        f"**File Found!**\n\n"
+                        f"  **Name:** {file['name']}\n"
+                        f"  **Video:** {file['is_video']}\n"
+                        f"  **Size:** {humanr_size(file['size'])}\n"
+                        f"  **DLURL:** {dlr['url']}"
+                        f" **It will upload soon**"
+                    )
+                    if file['thumb']:
+                       prmsg = await client.send_photo(
+                            chat_id=msg.chat.id,
+                            photo=file['thumb'],
+                            caption=fmsg
+                        )
+                    else:
+                       prmsg = await client.send_message(
+                            chat_id=msg.chat.id,
+                            text=fmsg
+                       )
+                    
+                    
+                    
