@@ -18,7 +18,7 @@ async def seed_file(maglink, client, msg):
         ls_msg = ''
         while True:
             jso=seedr.get_folder_items()
-            folders = jso.folders
+            folders = jso["folders"]
             fol = next((fol for fol in folders if fol["id"] == folder_id), None)
             
             if fol:# If folder is found, break the loop
