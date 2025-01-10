@@ -13,13 +13,13 @@ async def seed_file(maglink, client, msg):
     
     js = seedr.add_magnet(maglink)
     if js and js["success"] == True:
-        folder_id = js["user_torrent_id"]
+        folder_id = int(js["user_torrent_id"])
         ls_t = time.time()
         ls_msg = ''
         while True:
             jso=seedr.get_folder_items()
             folders = jso["folders"]
-            fol = next((fol for fol in folders if fol["id"] == folder_id), None)
+            fol = next((fol for fol in folders if int(fol["id"]) == folder_id), None)
             
             if fol:# If folder is found, break the loop
                 break
@@ -50,7 +50,7 @@ async def seed_file(maglink, client, msg):
             return
         if infol['files'] and len(infol['files']) >= 1:
             for file in infol['files']:
-                dlr = seedr.get_download_url(file['id'])
+                dlr = seedr.get_download_url(int(file['id']))
                 if not dlr:
                     await msg.edit_text(f"Sorry cannot get download links for this file!\n\nName : {file['name']}")
                     return
