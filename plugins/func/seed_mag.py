@@ -4,6 +4,7 @@ from plugins.func.simples import humanr_size, clean_dir
 from plugins.func.dl import download_file
 from plugins.func.tgup import upload_video, upload_document
 from config import Config 
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 async def seed_file(maglink, client, msg):
     if not seedr.check_session():
@@ -71,6 +72,17 @@ async def seed_file(maglink, client, msg):
                             chat_id=msg.chat.id,
                             text=fmsg
                        )
+                    if file["size"] >= Config.sizelimit:
+                        await client.send_message(
+                            chat_id=msg.chat.id,
+                            text="Sorry This file was larger than my size 2GB please use download link in upper msg and another method for upload it",
+                            reply_markup = InlineKeyboardMarkup(
+                            [
+                                  [
+                                      InlineKeyboardButton("Done!", callback_data=f"del_fol_{folder_id}")
+                                  ]
+                            ])
+                        )
                     await msg.edit_text("**File Downloading to Server...!**")
                     dlpath = download_file(client, msg, dlr['url'], file['name'])
                     if file['is_video']:
