@@ -2,7 +2,7 @@ import os, time
 from moviepy.editor import VideoFileClip
 from pyrogram.errors import FloodWait
 from plugins.func.simples import humanr_size, clean_dir, generate_thumbnail
-
+from plugins.func.dl import calculate_eta
 # Utility function to update progress
 async def update_progress(msg, current, total, file_name, start_time, last_update_time, last_progress_text, update_interval=10):
     elapsed_time = time.time() - start_time
