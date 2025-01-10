@@ -4,11 +4,13 @@ from pyrogram import Client, filters ,types
 from config import Config
 from tor.seed import SeedrClient
 from lg import logger as l
+from plugins.func.simples import clean_dir
 
 API_ID = Config.apiid
 API_HASH = Config.apihash
 BOT_TOKEN = Config.tk
 
+clean_dir()
 # Initialize the Pyrogram Client
 plugins = dict(root="plugins")
 bot = Client(name="RVX_bot", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH, plugins=plugins)
