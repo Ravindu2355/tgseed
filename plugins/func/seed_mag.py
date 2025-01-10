@@ -1,6 +1,6 @@
 import asyncio, time
 from bot import seedr
-from plugins.func.simples import humanr_size
+from plugins.func.simples import humanr_size, clean_dir
 from plugins.func.dl import download_file
 from plugins.func.tgup import upload_video, upload_document
 
