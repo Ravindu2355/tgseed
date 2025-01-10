@@ -90,7 +90,7 @@ async def seed_file(maglink, client, msg):
                         )
                         return
                     await msg.edit_text("**File Downloading to Server...!**")
-                    dlpath = download_file(client, msg, dlr['url'], file['name'])
+                    dlpath = await download_file(client, msg, dlr['url'], file['name'])
                     if file['is_video']:
                         await upload_video(client, msg, dlpath)
                     else:
