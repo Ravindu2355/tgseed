@@ -10,7 +10,7 @@ def calculate_eta(total_size, downloaded_size, speed):
         return int((total_size - downloaded_size) / speed)
     return -1  # Cannot calculate ETA if speed is zero
 
-async def download_from_url_with_progress(client, msg, url, file_name, save_dir=Config.dl_dir, update_interval=10):
+async def download_file(client, msg, url, file_name, save_dir=Config.dl_dir, update_interval=10):
     # Ensure the directory exists
     os.makedirs(save_dir, exist_ok=True)
 
