@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+from lg import logger as l
 
 class SeedrClient:
     CONFIG_FILE = "seedr_session.json"
