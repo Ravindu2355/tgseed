@@ -3,6 +3,7 @@ from bot import seedr
 from plugins.func.simples import humanr_size, clean_dir
 from plugins.func.dl import download_file
 from plugins.func.tgup import upload_video, upload_document
+from config import Config 
 
 async def seed_file(maglink, client, msg):
     if not seedr.check_session():
@@ -76,7 +77,7 @@ async def seed_file(maglink, client, msg):
                         await upload_video(client, msg, dlpath)
                     else:
                         await upload_documant(client, msg, dlpath)
-                    clean_dir()
+                    clean_dir(Config.dl_dir)
                     asyncio.sleep(2)
                     
             await msg.delete()            
