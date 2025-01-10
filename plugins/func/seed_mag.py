@@ -94,7 +94,7 @@ async def seed_file(maglink, client, msg):
                     if file['is_video']:
                         await upload_video(client, msg, dlpath)
                     else:
-                        await upload_documant(client, msg, dlpath)
+                        await upload_document(client, msg, dlpath)
                     clean_dir(Config.dl_dir)
                     asyncio.sleep(2)
                     
