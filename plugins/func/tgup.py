@@ -1,4 +1,4 @@
-import time
+import os, time
 from moviepy.editor import VideoFileClip
 from pyrogram.errors import FloodWait
 from plugins.func.simples import humanr_size, clean_dir, generate_thumbnail
@@ -62,7 +62,7 @@ async def upload_video(client, msg, file_path, thumb_path=None):
     if not thumb_path:
       await msg.edit_text("**Genarating Thumbnail...!**")
       thumb_path = f"{file_path}.jpg"
-      await generate_thumbnail(video_path, thumbnail_path)
+      generate_thumbnail(video_path, thumbnail_path)
     # Extract video duration using MoviePy
     try:
         video_clip = VideoFileClip(file_path)
