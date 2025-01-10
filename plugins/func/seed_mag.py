@@ -75,7 +75,7 @@ async def seed_file(maglink, client, msg):
                     if file["size"] >= Config.sizelimit:
                         await client.send_message(
                             chat_id=msg.chat.id,
-                            text="Sorry This file was larger than my size 2GB please use download link in upper msg and another method for upload it",
+                            text="Sorry This file was larger than my size 2GB please use download link in upper msg and another method for upload it.\nAfter get the file click below button to delete the file!.",
                             reply_markup = InlineKeyboardMarkup(
                             [
                                   [
@@ -83,6 +83,7 @@ async def seed_file(maglink, client, msg):
                                   ]
                             ])
                         )
+                        return
                     await msg.edit_text("**File Downloading to Server...!**")
                     dlpath = download_file(client, msg, dlr['url'], file['name'])
                     if file['is_video']:
