@@ -1,6 +1,8 @@
 import asyncio, time
 from bot import seedr
 from plugins.func.simples import humanr_size
+from plugins.func.dl import download_file
+from plugins.func.tgup import upload_video, upload_document
 
 async def seed_file(maglink, client, msg):
     if not seedr.check_session():
@@ -68,6 +70,21 @@ async def seed_file(maglink, client, msg):
                             chat_id=msg.chat.id,
                             text=fmsg
                        )
+                    await msg.edit_text("**File Downloading to Server...!**")
+                    dlpath = download_file(client, msg, dlr['url'], file['name'])
+                    if file['is_video']:
+                        await upload_video(client, msg, dlpath)
+                    else:
+                        await upload_documant(client, msg, dlpath)
+                    clean_dir()
+                    asyncio.sleep(2)
                     
-                    
+            await msg.delete()            
+        else:
+            await msg.edit_text("**Sorry Cannot find files!...**")
+        seedr.delete([{
+                type:"folder",
+                id:folder_id
+            }])
+        
                     
