@@ -1,6 +1,7 @@
 import asyncio, time
 from bot import seedr
 from plugins.func.simples import humanr_size
+
 async def seed_file(maglink, msg):
     if not seedr.check_session():
         await msg.edit_text("Sorry, Seedr session was invalid!...")
@@ -11,12 +12,13 @@ async def seed_file(maglink, msg):
         folder_id = js["id"]
         ls_t = time.time()
         ls_msg = ''
-        
+        sd =
         while True:
             folders = seedr.get_folder_items().folders
             fol = next((fol for fol in folders if fol["id"] == folder_id), None)
             
-            if fol:  # If folder is found, break the loop
+            if fol:# If folder is found, break the loop
+                sd = fol
                 break
             
             upT = (
@@ -36,3 +38,9 @@ async def seed_file(maglink, msg):
                 ls_msg = upT
             
             await asyncio.sleep(3)  # Await is mandatory in async functions
+        infol = seedr.get_folder_items(folder_id)
+        if not infol:
+            await msg.edit_text(f"**Error!**\nSorry cant get folder data id:{folder_id}")
+            return
+        
+    
