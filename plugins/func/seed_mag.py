@@ -63,7 +63,7 @@ async def seed_file(maglink, client, msg):
                         f"  **Name:** {file['name']}\n"
                         f"  **Video:** {file['is_video']}\n"
                         f"  **Size:** {humanr_size(file['size'])}\n"
-                        f"  **DLURL:** {dlr['url']}"
+                        f"  **DLURL:** {dlr['url']}\n"
                         f" **It will upload soon**"
                     )
                     prmsg = await client.send_message(
