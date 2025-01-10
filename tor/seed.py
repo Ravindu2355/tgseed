@@ -45,7 +45,7 @@ class SeedrClient:
         Log in to the Seedr account.
         If a valid session exists, reuse it.
         """
-        if self.cookies and self.check_session_valid():
+        if self.cookies and self.check_session():
             l.info(f"Using existing session for {self.email}.")
             return True
 
