@@ -22,7 +22,7 @@ def identify_link_type(text):
     return None
 
 # Message handler
-@Client.on_message(filters.text & ~filters.edited)
+@Client.on_message(filters.text)
 async def detect_torrent_or_magnet(client, message):
     text = message.text.strip()
     if not is_auth(message.chat.id):
