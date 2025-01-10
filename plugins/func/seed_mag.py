@@ -13,17 +13,19 @@ async def seed_file(maglink, client, msg):
     
     js = seedr.add_magnet(maglink)
     if js and js["success"] == True:
-        folder_id = int(js["user_torrent_id"])
+        folder_title = int(js["title"])
+        folder_id = 0
         ls_t = time.time()
         ls_msg = ''
         while True:
             jso = seedr.get_folder_items()
             folders = jso["folders"]
-            fol = next((fol for fol in folders if int(fol["id"]) == folder_id), None)
-            await msg.reply(f"folders: {json.dumps(folders)} \n\nfolder: {json.dumps(fol)}\n\nfolder_id: {folder_id}")
+            fol = next((fol for fol in folders if int(fol["path"]) == folder_title), None)
+            await msg.reply(f"folders: {json.dumps(folders)} \n\nfolder: {json.dumps(fol)}\n\nfolder_id: {folder_title}")
             
             if fol:# If folder is found, break the loop
                 await msg.reply(f"Found: {json.dumps(fol)}")
+                folder_id = fol["id"]
                 break
 
             if jso['torrents']:
