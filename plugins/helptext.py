@@ -5,7 +5,7 @@ from plugins.func.simples import mention_user
 @Client.on_message(filters.command("start"))
 async def _ms(client, message:types.Message):
     await message.reply(
-      f"**💫Rx Seedr Torrent Uper💫**\n\n**Hi🫡...{mention_user(messag)}😍\n\nGive me a Torrent Link or magnet link for upload**"
+      f"**💫Rx Seedr Torrent Uper💫**\n\n**Hi🫡...{mention_user(message)}😍\n\nGive me a Torrent Link or magnet link for upload**"
     )
 
 @Client.on_message(filters.command("help"))
