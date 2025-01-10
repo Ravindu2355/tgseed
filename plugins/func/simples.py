@@ -1,5 +1,8 @@
 import urllib.parse
 from moviepy.editor import VideoFileClip
+import os
+import shutil
+
 
 def url_decode(encoded_string):
     return urllib.parse.unquote(encoded_string)
@@ -29,3 +32,23 @@ def humanr_size(size, decimal_places=2):
             return f"{size:.{decimal_places}f} {unit}"
         size /= 1024
 
+
+def clean_dir(directory):
+    try:
+        if not os.path.exists(directory):
+            print(f"Directory '{directory}' does not exist.")
+            return False
+
+        for item in os.listdir(directory):
+            item_path = os.path.join(directory, item)
+
+            if os.path.isfile(item_path) or os.path.islink(item_path):
+                os.unlink(item_path)  # Remove files and symlinks
+            elif os.path.isdir(item_path):
+                shutil.rmtree(item_path)  # Remove directories recursively
+
+        return True
+
+    except Exception as e:
+        print(f"Error cleaning directory '{directory}': {e}")
+        return False
