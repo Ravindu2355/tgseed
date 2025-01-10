@@ -13,33 +13,35 @@ async def seed_file(maglink, client, msg):
     
     js = seedr.add_magnet(maglink)
     if js and js["success"] == True:
-        folder_id = js["id"]
+        folder_id = js["user_torrent_id"]
         ls_t = time.time()
         ls_msg = ''
-        sd =
         while True:
-            folders = seedr.get_folder_items().folders
+            jso=seedr.get_folder_items()
+            folders = jso.folders
             fol = next((fol for fol in folders if fol["id"] == folder_id), None)
             
             if fol:# If folder is found, break the loop
-                sd = fol
                 break
-            
-            upT = (
+
+            if jso['torrents']:
+                tor=jso['torrents'][0]
+                
+                upT = (
                 f"**Seeding...**\n\n"
-                f"**Name:** {fol['name']}\n"
-                f"**Progress:** {fol['progress']}%\n"
-                f"**Leechers:** {fol['leechers']}\n"
-                f"**Seeders:** {fol['seeders']}\n"
-                f"**Size:** {humanr_size(fol['size'])}\n\n"
-                f"**Warnings:** {fol.get('warnings', 'None')}"
-            )
+                f"**Name:** {tor['name']}\n"
+                f"**Progress:** {tor['progress']}%\n"
+                f"**Leechers:** {tor['leechers']}\n"
+                f"**Seeders:** {tor['seeders']}\n"
+                f"**Size:** {humanr_size(tor['size'])}\n\n"
+                f"**Warnings:** {tor.get('warnings', 'None')}"
+                )
             
-            t_diff = time.time() - ls_t
-            if t_diff >= 10 and upT != ls_msg:
-                await msg.edit_text(upT)
-                ls_t = time.time()
-                ls_msg = upT
+                t_diff = time.time() - ls_t
+                if t_diff >= 10 and upT != ls_msg:
+                    await msg.edit_text(upT)
+                    ls_t = time.time()
+                    ls_msg = upT
             
             await asyncio.sleep(3)  # Await is mandatory in async functions
         infol = seedr.get_folder_items(folder_id)
