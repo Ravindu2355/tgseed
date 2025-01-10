@@ -21,10 +21,10 @@ async def seed_file(maglink, client, msg):
             jso = seedr.get_folder_items()
             folders = jso["folders"]
             fol = next((fol for fol in folders if fol["path"] == folder_title), None)
-            await msg.reply(f"folders: {json.dumps(folders)} \n\nfolder: {json.dumps(fol)}\n\nfolder_id: {folder_title}")
+            #await msg.reply(f"folders: {json.dumps(folders)} \n\nfolder: {json.dumps(fol)}\n\nfolder_id: {folder_title}")
             
             if fol:# If folder is found, break the loop
-                await msg.reply(f"Found: {json.dumps(fol)}")
+                #await msg.reply(f"Found: {json.dumps(fol)}")
                 folder_id = fol["id"]
                 break
 
@@ -57,7 +57,6 @@ async def seed_file(maglink, client, msg):
                 dlr = seedr.get_download_url(int(file['id']))
                 if not dlr:
                     await msg.edit_text(f"Sorry cannot get download links for this file!\n\nName : {file['name']}")
-                    return
                 if dlr and dlr['success'] == True:
                     fmsg = (
                         f"**File Found!**\n\n"
