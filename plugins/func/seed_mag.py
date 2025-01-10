@@ -18,9 +18,9 @@ async def seed_file(maglink, client, msg):
         ls_msg = ''
         while True:
             jso = seedr.get_folder_items()
-            await msg.reply(f"{json.dumps(jso)}")
             folders = jso["folders"]
             fol = next((fol for fol in folders if int(fol["id"]) == folder_id), None)
+            await msg.reply(f"folders: {json.dumps(folders)} \n\nfolder: {json.dumps(fol)}\n\nfolder_id: {folder_id}")
             
             if fol:# If folder is found, break the loop
                 await msg.reply(f"Found: {json.dumps(fol)}")
