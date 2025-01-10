@@ -10,7 +10,7 @@ API_ID = Config.apiid
 API_HASH = Config.apihash
 BOT_TOKEN = Config.tk
 
-clean_dir()
+clean_dir(Config.dl_dir)
 # Initialize the Pyrogram Client
 plugins = dict(root="plugins")
 bot = Client(name="RVX_bot", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH, plugins=plugins)
