@@ -16,3 +16,5 @@ class Config(object):
   seedr_email = os.getenv("seedrEmail")
 
   seedr_pw = os.getenv("seedrPw")
+
+  dl_dir = os.getenv("dldir","dl")
