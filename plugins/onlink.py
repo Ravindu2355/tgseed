@@ -1,7 +1,7 @@
 from pyrogram import Client, filters, types
 from plugins.func.simples import mention_user
 from plugins.autherHandle import is_auth
-import re
+import re, json
 from bot import seedr
 from plugins.func.seed_mag import seed_file
 
@@ -39,6 +39,6 @@ async def detect_torrent_or_magnet(client, message):
         if "magnet" in magt:
             await seed_file(magt["magnet"], client, msg)
         else:
-            await msg.edit_text("Sorry cannot extract Magnet links from it!...")
+            await msg.edit_text(f"Sorry cannot extract Magnet links from it!...{json.dumps(magt)}")
     else:
         await message.reply("No torrent or magnet link detected.")
