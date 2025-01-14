@@ -21,4 +21,4 @@ class Config(object):
 
   sizelimit = int(os.getenv("sizelimit",2147483648))
 
-
+  timelim = int(os.getenv("timelimit",30))
