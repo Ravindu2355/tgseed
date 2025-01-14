@@ -65,7 +65,8 @@ async def seed_file(maglink, client, msg):
                 "id":folder_id
             }])
             except Exeption as e:
-                
+                print("err")
+            print("returning")
             return
         infol = seedr.get_folder_items(folder_id)
         if not infol:
