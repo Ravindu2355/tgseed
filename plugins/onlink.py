@@ -36,8 +36,8 @@ async def detect_torrent_or_magnet(client, message):
     elif link_type == "torrent":
         msg = await message.reply("Torrent Link found Proccesing!...")
         magt = seedr.fetch_torrent(text)
-        if "magnet" in magt:
-            await seed_file(magt["magnet"], client, msg)
+        if "torrents" in magt:
+            await seed_file(magt["torrents"][0]["magnet"], client, msg)
         else:
             await msg.edit_text(f"Sorry cannot extract Magnet links from it!...{json.dumps(magt)}")
     else:
