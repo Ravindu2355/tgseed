@@ -62,7 +62,7 @@ async def seed_file(maglink, client, msg):
             try:
                 seedr.delete([{
                 "type":"folder",
-                "id":folder_id
+                "id":tid
             }])
             except Exeption as e:
                 print("err")
