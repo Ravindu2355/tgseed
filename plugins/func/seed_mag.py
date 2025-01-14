@@ -12,7 +12,12 @@ async def seed_file(maglink, client, msg):
         return
     
     js = seedr.add_magnet(maglink)
-    if js and js["success"] == True:
+    if js and not js.get("success"):
+        if js.get("wt"):
+            await msg.edit_text("sorry! list is full!")
+            return
+    if js and js.get("success"):
+      if js["success"] == True:
         folder_title = js["title"]
         folder_id = 0
         ls_t = time.time()
@@ -56,12 +61,11 @@ async def seed_file(maglink, client, msg):
                         ls_msg = upT
             
             await asyncio.sleep(10) # Await is mandatory in async functions
-
         if wr == 0:
             wr = 1
             try:
                 seedr.delete([{
-                "type":"folder",
+                "type":"torrent",
                 "id":tid
             }])
             except Exeption as e:
