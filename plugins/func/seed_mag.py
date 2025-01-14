@@ -17,6 +17,10 @@ async def seed_file(maglink, client, msg):
         folder_id = 0
         ls_t = time.time()
         ls_msg = ''
+        pg_msg=''
+        st_t=time.time();
+        timelim=Config.timelim or 30
+        wr = 1
         while True:
             jso = seedr.get_folder_items()
             folders = jso["folders"]
@@ -27,7 +31,6 @@ async def seed_file(maglink, client, msg):
                 #await msg.reply(f"Found: {json.dumps(fol)}")
                 folder_id = fol["id"]
                 break
-
             if jso['torrents']:
                 tor=jso['torrents'][0]
                 
@@ -40,14 +43,21 @@ async def seed_file(maglink, client, msg):
                 f"  **Size:** {humanr_size(tor['size'])}\n\n"
                 f"  **Warnings:** {tor.get('warnings', 'None')}"
                 )
-            
+                if time.time() - st_t >= timelim and upT == pg_msg:
+                    await msg.edit_text("**Task expired!**\nThat was too slow or not working!\n\n")
+                    wr = 0
+                    break
                 t_diff = time.time() - ls_t
                 if t_diff >= 10 and upT != ls_msg:
                     await msg.edit_text(upT)
                     ls_t = time.time()
                     ls_msg = upT
             
-            await asyncio.sleep(10)  # Await is mandatory in async functions
+            await asyncio.sleep(10) # Await is mandatory in async functions
+
+        if wr == 0:
+            wr = 1
+            return
         infol = seedr.get_folder_items(folder_id)
         if not infol:
             await msg.edit_text(f"**Error!**\nSorry cant get folder data id:{folder_id}")
