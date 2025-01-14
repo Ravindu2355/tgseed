@@ -47,15 +47,23 @@ async def seed_file(maglink, client, msg):
                     wr = 0
                     break
                 t_diff = time.time() - ls_t
-                if t_diff >= 10 and upT != ls_msg:
-                    await msg.edit_text(upT)
-                    ls_t = time.time()
-                    ls_msg = upT
+                if t_diff == 0 or t_diff >= 10:
+                    if upT != ls_msg:
+                        await msg.edit_text(upT)
+                        ls_t = time.time()
+                        ls_msg = upT
             
             await asyncio.sleep(10) # Await is mandatory in async functions
 
         if wr == 0:
             wr = 1
+            try:
+                seedr.delete([{
+                "type":"folder",
+                "id":folder_id
+            }])
+            except Exeption as e:
+                
             return
         infol = seedr.get_folder_items(folder_id)
         if not infol:
