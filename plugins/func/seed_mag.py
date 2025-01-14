@@ -20,6 +20,7 @@ async def seed_file(maglink, client, msg):
         st_t=time.time();
         timelim=Config.timelim or 30
         wr = 1
+        tid = None
         while True:
             jso = seedr.get_folder_items()
             folders = jso["folders"]
@@ -44,6 +45,7 @@ async def seed_file(maglink, client, msg):
                 )
                 if time.time() - st_t >= timelim and upT == ls_msg:
                     await msg.edit_text("**Task expired!**\nThat was too slow or not working!\n\n")
+                    tid = tor['id']
                     wr = 0
                     break
                 t_diff = time.time() - ls_t
