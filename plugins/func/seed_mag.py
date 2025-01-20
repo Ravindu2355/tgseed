@@ -78,6 +78,8 @@ async def seed_file(maglink, client, msg):
             return
         if infol['files'] and len(infol['files']) >= 1:
             for file in infol['files']:
+              fname_s = file['name'].endswith(".nfo")
+              if fname_s == False or fname_s.endswith(".info") == False:
                 dlr = seedr.get_download_url(int(file['id']))
                 if not dlr:
                     await msg.edit_text(f"Sorry cannot get download links for this file!\n\nName : {file['name']}")
