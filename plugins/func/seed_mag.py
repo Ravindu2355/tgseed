@@ -6,6 +6,15 @@ from plugins.func.tgup import upload_video, upload_document
 from config import Config 
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+def is_valid_extension(filename, invalid_extensions):
+    return not any(filename.endswith(ext) for ext in invalid_extensions)
+
+# Example usage
+invalid_exts = ['.txt', '.info', '.log', '.json', '. nfo', '.nfo']
+#print(is_invalid_extension("example.mp4", invalid_exts))  # True (valid file)
+#print(is_invalid_extension("document.txt", invalid_exts))  # False (invalid file)
+
+
 async def seed_file(maglink, client, msg):
     if not seedr.check_session():
         await msg.edit_text("Sorry, Seedr session was invalid!...\nRetring...")
@@ -90,7 +99,8 @@ async def seed_file(maglink, client, msg):
         if infol['files'] and len(infol['files']) >= 1:
             for file in infol['files']:
               fname_s = file['name']
-              if fname_s.endswith('.txt') == False or fname_s.endswith(".info") == False:
+              isvN=is_valid_extension(fname_s, invalid_exts)
+              if isvN:
                 dlr = seedr.get_download_url(int(file['id']))
                 if not dlr:
                     await msg.edit_text(f"Sorry cannot get download links for this file!\n\nName : {file['name']}")
