@@ -8,8 +8,19 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 async def seed_file(maglink, client, msg):
     if not seedr.check_session():
-        await msg.edit_text("Sorry, Seedr session was invalid!...")
-        return
+        await msg.edit_text("Sorry, Seedr session was invalid!...\nRetring...")
+        if seedr.login():
+            l.info("Successfully loged into seedr account!...")
+            if not seedr.check_session():
+                l.info("Sorry cant log into seedr account")
+                await msg.edit_text("Sorry, Failed to login!....")
+                return
+            #l.info(f"account settings: {json.dumps(seedr.get_account_settings())}")
+        else:
+            l.info("Sorry cant log into seedr account")
+            await msg.edit_text("Sorry, Failed to login!....")
+            # Run the bot
+            return
     
     js = seedr.add_magnet(maglink)
     if js and not js.get("success"):
