@@ -5,6 +5,7 @@ from plugins.func.dl import download_file
 from plugins.func.tgup import upload_video, upload_document
 from config import Config 
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from lg import logger as l
 
 def is_valid_extension(filename, invalid_extensions):
     return not any(filename.endswith(ext) for ext in invalid_extensions)
