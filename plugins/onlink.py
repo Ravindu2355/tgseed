@@ -30,6 +30,8 @@ async def detect_torrent_or_magnet(client, message):
       await message.delete()
       return
     link_type = identify_link_type(text)
+    if not seedr.check_session():
+        seedr.login()
     if link_type == "magnet":
         msg = await message.reply("Magnet Link found Proccesing!...")
         await seed_file(text, client, msg)
