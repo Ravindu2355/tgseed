@@ -147,7 +147,10 @@ class SeedrClient:
         if response.status_code == 200:
             return response.json()
         else:
-            return False
+            if self.cookies and not self.check_session():
+                return {"error":"Not loged or login expired"}
+            else:
+                return {"error":"No sesstion"}
 
     def add_magnet(self, magnet_link, folder_id=0):
         """Add a torrent to the account using a magnet link."""
