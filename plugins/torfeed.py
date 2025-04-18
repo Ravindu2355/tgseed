@@ -186,6 +186,7 @@ async def magnet_button(client, callback_query):
     l.info(f"the key {key},{magnet}")
     if magnet:
         #callback_query.answer("Magnet copied!", show_alert=True)
-        await callback_query.message.reply_text(f"🔗 Magnet link:\n`{magnet}`")
+        #await callback_query.message.reply_text(f"🔗 Magnet link:\n`{magnet}`")
+        await detect_torrent_or_magnet(client, callback_query.message, rtext = magnet)
     else:
         await callback_query.message.reply_text("Magnet not found or expired.")
