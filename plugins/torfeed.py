@@ -179,12 +179,12 @@ def restart(_f, message):
     start_feed_watcher(_f)
 
 @Client.on_callback_query(filters.regex(r"^mgt_"))
-def magnet_button(client, callback_query):
+async def magnet_button(client, callback_query):
     key = callback_query.data.replace("mgt_", "", 1)
     magnet = magnet_store.get(key)
 
     if magnet:
-        callback_query.answer("Magnet copied!", show_alert=True)
-        callback_query.message.reply_text(f"🔗 Magnet link:\n`{magnet}`")
+        #callback_query.answer("Magnet copied!", show_alert=True)
+        await callback_query.message.reply_text(f"🔗 Magnet link:\n`{magnet}`")
     else:
-        callback_query.answer("Magnet not found or expired.", show_alert=True)
+        await callback_query.message.reply_text("Magnet not found or expired.")
