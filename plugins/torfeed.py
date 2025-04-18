@@ -67,7 +67,7 @@ def build_message(item):
            f"**📦 Title:** `{title}`\n" \
            f"**📅 Published:** {pub}\n" \
            f"**📁 Size:** {size_mb}" \
-           f"\n**Link:** [Magnet Link]({magnet})"
+           f"\n**Link:** `{magnet}`"
 
     button = InlineKeyboardMarkup([
         [InlineKeyboardButton("🔗 Magnet", callback_data=f"mgt_{key}")]
