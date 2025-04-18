@@ -111,7 +111,7 @@ async def send_new_items(bot: Client):
             await batch_sender(bot, to_send)
             save_sent(sent_ids)
 
-        await asyncio.sleep(interval * 60)
+        await asyncio.sleep(interval)
 
 def start_feed_watcher(bot: Client):
     def run_asyncio():
