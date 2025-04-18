@@ -11,6 +11,8 @@ class Config(object):
   
   OWNER = int(os.getenv("owner"))
 
+  owner_id = int(os.getenv("owner"))
+  
   PRARAL_LIMIT = int(os.getenv("pps",3))
 
   seedr_email = os.getenv("seedrEmail")
