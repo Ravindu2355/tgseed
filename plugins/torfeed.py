@@ -1,146 +1,157 @@
-import asyncio
-import json
-import feedparser
+import threading
 import time
-from datetime import datetime
+import json
+import requests
+import os
+from bs4 import BeautifulSoup
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from config import Config
 
 FEEDS_FILE = "feeds.json"
-SEEN_FILE = "seen.json"
-CHECK_INTERVAL = 60  # seconds
-CHAT_ID = "1387186514"  # replace or fetch dynamically if needed
+SENT_FILE = "sent_items.json"
 
-def load_json(path, default):
+# Ensure JSON files exist
+if not os.path.exists(FEEDS_FILE):
+    with open(FEEDS_FILE, "w") as f:
+        json.dump({"feeds": [], "enabled": True}, f)
+
+if not os.path.exists(SENT_FILE):
+    with open(SENT_FILE, "w") as f:
+        json.dump([], f)
+
+def load_feeds():
+    with open(FEEDS_FILE) as f:
+        return json.load(f)
+
+def save_feeds(data):
+    with open(FEEDS_FILE, "w") as f:
+        json.dump(data, f)
+
+def load_sent():
+    with open(SENT_FILE) as f:
+        return json.load(f)
+
+def save_sent(sent):
+    with open(SENT_FILE, "w") as f:
+        json.dump(sent, f)
+
+def parse_rss(url):
     try:
-        with open(path, "r") as f:
-            return json.load(f)
-    except:
-        return default
+        res = requests.get(url, timeout=10)
+        soup = BeautifulSoup(res.content, "xml")
+        items = soup.find_all("item")
+        return items
+    except Exception as e:
+        print(f"[RSS ERROR] {url} -> {e}")
+        return []
 
-def save_json(path, data):
-    with open(path, "w") as f:
-        json.dump(data, f, indent=2)
-
-feeds = load_json(FEEDS_FILE, [])
-seen = load_json(SEEN_FILE, [])
-
-async def check_feeds_task(app: Client):
+async def send_new_items(bot: Client):
     while True:
-        for i, feed in enumerate(feeds):
-            if not feed.get("enabled", True):
-                continue
-            try:
-                d = feedparser.parse(feed["url"])
-                for entry in d.entries:
-                    guid = entry.get("guid") or entry.get("id") or entry.get("link")
-                    if guid in seen:
-                        continue
-                    seen.append(guid)
-                    save_json(SEEN_FILE, seen)
-                    await send_torrent(app, entry)
-            except Exception as e:
-                print(f"Error checking feed {feed['url']}: {e}")
-        await asyncio.sleep(CHECK_INTERVAL)
+        feeds = load_feeds()
+        if not feeds.get("enabled", True):
+            time.sleep(60)
+            continue
 
-def format_size(size_bytes):
-    size_bytes = int(size_bytes)
-    for unit in ['B', 'KB', 'MB', 'GB']:
-        if size_bytes < 1024:
-            return f"{size_bytes:.2f} {unit}"
-        size_bytes /= 1024
-    return f"{size_bytes:.2f} TB"
+        sent_ids = load_sent()
+        for feed_url in feeds["feeds"]:
+            items = parse_rss(feed_url)
+            for item in items:
+                guid = item.find("guid").text.strip()
+                if guid in sent_ids:
+                    continue
 
-async def send_torrent(app, entry):
-    title = entry.title.strip()
-    magnet = entry.link
-    uploader = entry.get("dc_creator", "Unknown")
-    pub_date = entry.get("published", "")
-    comments = entry.get("comments", "")
-    info_hash = entry.get("torrent_infohash", "")
-    size = "Unknown"
+                title = item.find("title").text.strip()
+                magnet = item.find("link").text.strip()
+                size_tag = item.find("contentLength")
+                size = int(size_tag.text.strip()) if size_tag else 0
+                size_mb = f"{size / (1024 * 1024):.2f} MB" if size else "N/A"
+                pub = item.find("pubDate").text.strip()
+
+                text = f"**🧲 New Torrent Found!**\n\n" \
+                       f"**📦 Title:** `{title}`\n" \
+                       f"**📅 Published:** {pub}\n" \
+                       f"**📁 Size:** {size_mb}"
+
+                button = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("🔗 Magnet", callback_data=f"mgt_{magnet}")]
+                ])
+
+                try:
+                    await bot.send_message(Config.OWNER, text, reply_markup=button)
+                    sent_ids.append(guid)
+                    save_sent(sent_ids)
+                except Exception as e:
+                    print(f"[SEND ERROR] {e}")
+
+        time.sleep(300)  # check every 5 minutes
+
+
+def start_feed_watcher(bot: Client):
+    t = threading.Thread(target=send_new_items, args=(bot,), daemon=True)
+    t.start()
+
+
+# Command: /addfeed <url>
+@Client.on_message(filters.command("addfeed") & filters.user(Config.owner_id))
+def add_feed(_, message):
     try:
-        size = format_size(entry.torrent_contentlength)
+        url = message.text.split(" ", 1)[1]
+    except IndexError:
+        return message.reply("❌ Usage: `/addfeed <url>`", quote=True)
+
+    feeds = load_feeds()
+    if url in feeds["feeds"]:
+        return message.reply("⚠️ Feed already exists.")
+    feeds["feeds"].append(url)
+    save_feeds(feeds)
+    message.reply("✅ Feed added!")
+
+
+# Command: /listfeeds
+@Client.on_message(filters.command("listfeeds") & filters.user(Config.owner_id))
+def list_feeds(_, message):
+    feeds = load_feeds()
+    text = "**📡 Current RSS Feeds:**\n\n"
+    if not feeds["feeds"]:
+        text += "No feeds added yet."
+    else:
+        for i, f in enumerate(feeds["feeds"], 1):
+            text += f"{i}. {f}\n"
+    text += f"\n🔘 Listener is {'enabled' if feeds.get('enabled', True) else 'disabled'}"
+    message.reply(text)
+
+
+# Command: /removefeed <index>
+@Client.on_message(filters.command("removefeed") & filters.user(Config.owner_id))
+def remove_feed(_, message):
+    try:
+        index = int(message.text.split(" ", 1)[1]) - 1
     except:
-        pass
+        return message.reply("❌ Usage: `/removefeed <index>`", quote=True)
 
-    text = (
-        f"🎬 **New Torrent Found!**\n\n"
-        f"📥 **Title**: `{title}`\n"
-        f"🗂️ **Size**: `{size}`\n"
-        f"🕵️‍♂️ **Uploader**: `{uploader}`\n"
-        f"📅 **Published**: `{pub_date}`\n"
-        f"\n🔗 [View on TPB]({comments})"
-    )
-
-    keyboard = InlineKeyboardMarkup([
-        [InlineKeyboardButton("🧲 Magnet Link", callback_data=f"mgt_{magnet}")]
-    ])
-
-    try:
-        await app.send_message(
-            CHAT_ID,
-            text,
-            reply_markup=keyboard,
-            disable_web_page_preview=True
-        )
-    except Exception as e:
-        print("Send error:", e)
-
-# --- Command Handlers ---
-
-@Client.on_message(filters.command("addfeed"))
-async def add_feed(_, message):
-    if len(message.command) < 2:
-        return await message.reply("Usage: /addfeed [url]")
-    url = message.command[1]
-    feeds.append({"url": url, "enabled": True})
-    save_json(FEEDS_FILE, feeds)
-    await message.reply("✅ Feed added and enabled.")
-
-@Client.on_message(filters.command("listfeeds"))
-async def list_feeds(_, message):
-    if not feeds:
-        return await message.reply("No feeds added.")
-    reply = ""
-    for i, feed in enumerate(feeds):
-        status = "✅ ON" if feed.get("enabled", True) else "❌ OFF"
-        reply += f"{i + 1}. {status} - `{feed['url']}`\n"
-    await message.reply(reply)
-
-@Client.on_message(filters.command("togglefeed"))
-async def toggle_feed(_, message):
-    if len(message.command) < 2 or not message.command[1].isdigit():
-        return await message.reply("Usage: /togglefeed [index]")
-    idx = int(message.command[1]) - 1
-    if 0 <= idx < len(feeds):
-        feeds[idx]["enabled"] = not feeds[idx].get("enabled", True)
-        save_json(FEEDS_FILE, feeds)
-        await message.reply(f"Toggled feed {idx + 1} to {'ON' if feeds[idx]['enabled'] else 'OFF'}.")
+    feeds = load_feeds()
+    if 0 <= index < len(feeds["feeds"]):
+        removed = feeds["feeds"].pop(index)
+        save_feeds(feeds)
+        message.reply(f"✅ Removed feed:\n`{removed}`")
     else:
-        await message.reply("Invalid feed index.")
+        message.reply("❌ Invalid index.")
 
-@Client.on_message(filters.command("removefeed"))
-async def remove_feed(_, message):
-    if len(message.command) < 2 or not message.command[1].isdigit():
-        return await message.reply("Usage: /removefeed [index]")
-    idx = int(message.command[1]) - 1
-    if 0 <= idx < len(feeds):
-        removed = feeds.pop(idx)
-        save_json(FEEDS_FILE, feeds)
-        await message.reply(f"❌ Removed feed: {removed['url']}")
-    else:
-        await message.reply("Invalid feed index.")
 
-@Client.on_callback_query(filters.regex(r"mgt_"))
-async def handle_magnet_callback(client, callback_query):
-    magnet = callback_query.data[4:]
-    await callback_query.answer()
-    try:
-        await callback_query.message.reply(f"🧲 **Magnet Link**:\n`{magnet}`")
-    except Exception as e:
-        print("Callback reply error:", e)
+# Command: /togglefeeds
+@Client.on_message(filters.command("togglefeeds") & filters.user(Config.owner_id))
+def toggle_feed_status(_, message):
+    feeds = load_feeds()
+    feeds["enabled"] = not feeds.get("enabled", True)
+    save_feeds(feeds)
+    status = "enabled" if feeds["enabled"] else "disabled"
+    message.reply(f"🔁 Feed listener is now **{status}**")
 
-# --- Hook to Start Background Feed Checker ---
-def start_feed_watcher(app: Client):
-    app.loop.create_task(check_feeds_task(app))
+
+# Handle callback for magnet links
+@Client.on_callback_query(filters.regex(r"^mgt_"))
+def magnet_button(client, callback_query):
+    magnet = callback_query.data.replace("mgt_", "", 1)
+    callback_query.answer("Magnet copied!", show_alert=True)
+    callback_query.message.reply_text(f"🔗 Magnet link:\n`{magnet}`")
