@@ -26,6 +26,12 @@ if seedr.login():
 else:
     l.info("Sorry cant log into seedr account")
 # Run the bot
+#if __name__ == '__main__':
+    #l.info("bot client starting...")
+    #bot.run()
+# Run the bot
 if __name__ == '__main__':
     l.info("bot client starting...")
+    from plugins.torfeed import start_feed_watcher
+    start_feed_watcher(bot)
     bot.run()
