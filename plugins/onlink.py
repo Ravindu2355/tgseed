@@ -28,8 +28,10 @@ MAGNET_REGEX = r"^magnet:\?xt=urn:btih:[A-Za-z0-9]{40,50}"
 TORRENT_URL_REGEX = r"(https?://[^\s]+\.torrent)"
 
 @Client.on_message(filters.text & (filters.regex(MAGNET_REGEX) | filters.regex(TORRENT_URL_REGEX)))
-async def detect_torrent_or_magnet(client, message):
+async def detect_torrent_or_magnet(client, message, rtext=""):
     text = message.text.strip()
+    if rtext:
+        text = rtext
     if not is_auth(message.chat.id):
       await message.delete()
       return
