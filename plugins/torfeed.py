@@ -50,6 +50,7 @@ def parse_rss(url):
         return []
 
 async def send_new_items(bot: Client):
+    l.info("starting listn to feeds...!")
     while True:
         feeds = load_feeds()
         if not feeds.get("enabled", True):
