@@ -23,7 +23,10 @@ def identify_link_type(text):
     return None
 
 # Message handler
-@Client.on_message(filters.text)
+#@Client.on_message(filters.text)
+URL_REGEX = r"(https?://[^\s]+)"
+
+@Client.on_message(filters.text & filters.regex(URL_REGEX) & ~filters.command())
 async def detect_torrent_or_magnet(client, message):
     text = message.text.strip()
     if not is_auth(message.chat.id):
