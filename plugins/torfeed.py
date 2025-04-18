@@ -1,4 +1,3 @@
-import threading
 import time
 import json
 import requests
@@ -9,6 +8,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import Config
 from lg import logger as l
 import asyncio
+from threading import Thread
 
 
 FEEDS_FILE = "feeds.json"
@@ -94,11 +94,14 @@ async def send_new_items(bot: Client):
 
 
 def start_feed_watcher(bot: Client):
-    async def runner():
-        await send_new_items(bot)
-    
-    loop = asyncio.get_event_loop()
-    loop.create_task(runner())
+    def run_asyncio():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(send_new_items(bot))
+
+    thread = Thread(target=run_asyncio)
+    thread.daemon = True  # Set the thread as a daemon thread
+    thread.start()
 
 
 # Command: /addfeed <url>
