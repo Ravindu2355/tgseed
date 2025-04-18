@@ -77,7 +77,8 @@ async def send_new_items(bot: Client):
                 text = f"**🧲 New Torrent Found!**\n\n" \
                        f"**📦 Title:** `{title}`\n" \
                        f"**📅 Published:** {pub}\n" \
-                       f"**📁 Size:** {size_mb}"
+                       f"**📁 Size:** {size_mb}" \
+                       f"**Link:** {magnet}"
 
                 button = InlineKeyboardMarkup([
                     [InlineKeyboardButton("🔗 Magnet", callback_data=f"mgt_{magnet}")]
