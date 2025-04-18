@@ -12,6 +12,7 @@ from lg import logger as l
 
 FEEDS_FILE = "feeds.json"
 SENT_FILE = "sent_items.json"
+interval = 5
 
 # Ensure JSON files exist
 if not os.path.exists(FEEDS_FILE):
@@ -58,6 +59,7 @@ async def send_new_items(bot: Client):
         sent_ids = load_sent()
         for feed_url in feeds["feeds"]:
             items = parse_rss(feed_url)
+            l.info("doing...!")
             for item in items:
                 guid = item.find("guid").text.strip()
                 if guid in sent_ids:
@@ -86,7 +88,7 @@ async def send_new_items(bot: Client):
                 except Exception as e:
                     l.info(f"[SEND ERROR] {e}")
 
-        time.sleep(300)  # check every 5 minutes
+        time.sleep(interval)  # check every 5 minutes
 
 
 def start_feed_watcher(bot: Client):
