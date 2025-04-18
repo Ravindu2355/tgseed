@@ -8,6 +8,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import Config
 from lg import logger as l
+import asyncio
 
 
 FEEDS_FILE = "feeds.json"
@@ -93,8 +94,11 @@ async def send_new_items(bot: Client):
 
 
 def start_feed_watcher(bot: Client):
-    t = threading.Thread(target=send_new_items, args=(bot,), daemon=True)
-    t.start()
+    async def runner():
+        await send_new_items(bot)
+    
+    loop = asyncio.get_event_loop()
+    loop.create_task(runner())
 
 
 # Command: /addfeed <url>
