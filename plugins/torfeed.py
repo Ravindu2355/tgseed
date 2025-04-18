@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import Config
+from lg import logger as l
+
 
 FEEDS_FILE = "feeds.json"
 SENT_FILE = "sent_items.json"
@@ -43,7 +45,7 @@ def parse_rss(url):
         items = soup.find_all("item")
         return items
     except Exception as e:
-        print(f"[RSS ERROR] {url} -> {e}")
+        l.info(f"[RSS ERROR] {url} -> {e}")
         return []
 
 async def send_new_items(bot: Client):
@@ -82,7 +84,7 @@ async def send_new_items(bot: Client):
                     sent_ids.append(guid)
                     save_sent(sent_ids)
                 except Exception as e:
-                    print(f"[SEND ERROR] {e}")
+                    l.info(f"[SEND ERROR] {e}")
 
         time.sleep(300)  # check every 5 minutes
 
@@ -149,6 +151,11 @@ def toggle_feed_status(_, message):
     message.reply(f"🔁 Feed listener is now **{status}**")
 
 
+@Client.on_message(filters.command("sfeed") & filters.user(Config.owner_id))
+def restart(_f, message):
+    start_feed_watcher(_f)
+
+    
 # Handle callback for magnet links
 @Client.on_callback_query(filters.regex(r"^mgt_"))
 def magnet_button(client, callback_query):
