@@ -31,7 +31,8 @@ else:
     #bot.run()
 # Run the bot
 if __name__ == '__main__':
-    l.info("bot client starting...")
+    l.info("feeding..!")
     from plugins.torfeed import start_feed_watcher
     start_feed_watcher(bot)
+    l.info("bot client starting...")
     bot.run()
