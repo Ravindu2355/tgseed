@@ -180,9 +180,10 @@ def restart(_f, message):
 
 @Client.on_callback_query(filters.regex(r"^mgt_"))
 async def magnet_button(client, callback_query):
+    l.info("query chee...!")
     key = callback_query.data.replace("mgt_", "", 1)
     magnet = magnet_store.get(key)
-
+    l.info(f"the key {key},{magnet}")
     if magnet:
         #callback_query.answer("Magnet copied!", show_alert=True)
         await callback_query.message.reply_text(f"🔗 Magnet link:\n`{magnet}`")
