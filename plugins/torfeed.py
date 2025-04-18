@@ -10,6 +10,8 @@ from config import Config
 from lg import logger as l
 import asyncio
 from threading import Thread
+from plugins.onlink import detect_torrent_or_magnet
+
 
 FEEDS_FILE = "feeds.json"
 SENT_FILE = "sent_items.json"
