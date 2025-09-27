@@ -2,6 +2,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from globals import Authers  # Import the global Authers list
 from config import Config  # Import the OWNER ID
+from bot import seedr
 
 # Middleware to check if a user is authorized
 def is_auth(user_id: int) -> bool:
@@ -92,6 +93,22 @@ async def list_auth(client: Client, message: Message):
         await message.reply_text(f"❌ Error: {str(e)}")
 
 @Client.on_message(filters.command("isloged") & filters.private)
-async def is_loged(client: Client, message: Message):
+async def is_loged(client: Client, msg: Message):
     """Command to check login.."""
-    
+    if message.from_user.id != Config.OWNER:
+            await message.reply_text("❌ You are not authorized to use this command.")
+            return
+    if not seedr.check_session():
+        m = await msg.reply("Sorry, Seedr session was invalid!...\nRetring...")
+        if seedr.login():
+            l.info("Successfully loged into seedr account!...")
+            if not seedr.check_session():
+                l.info("Sorry cant log into seedr account")
+                await m.edit_text("Sorry, Failed to login!....")
+                return
+            #l.info(f"account settings: {json.dumps(seedr.get_account_settings())}")
+        else:
+            l.info("Sorry cant log into seedr account")
+            await m.edit_text("Sorry, Failed to login!....")
+            # Run the bot
+            return
