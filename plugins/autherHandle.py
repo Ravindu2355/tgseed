@@ -102,6 +102,7 @@ async def is_loged(client: Client, msg: Message):
         m = await msg.reply("Sorry, Seedr session was invalid!...\nRetring...")
         if seedr.login():
             l.info("Successfully loged into seedr account!...")
+            await m.edit_text("Login Sucess!")
             if not seedr.check_session():
                 l.info("Sorry cant log into seedr account")
                 await m.edit_text("Sorry, Failed to login!....")
@@ -112,3 +113,5 @@ async def is_loged(client: Client, msg: Message):
             await m.edit_text("Sorry, Failed to login!....")
             # Run the bot
             return
+    else:
+        await msg.reply("alredy loged!")
