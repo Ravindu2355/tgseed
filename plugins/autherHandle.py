@@ -90,3 +90,8 @@ async def list_auth(client: Client, message: Message):
 
     except Exception as e:
         await message.reply_text(f"❌ Error: {str(e)}")
+
+@Client.on_message(filters.command("isloged") & filters.private)
+async def is_loged(client: Client, message: Message):
+    """Command to check login.."""
+    
