@@ -4,6 +4,9 @@ from globals import Authers  # Import the global Authers list
 from config import Config  # Import the OWNER ID
 from bot import seedr
 
+if Config.AUTH:
+    Authers.extend(int(x.strip()) for x in Config.AUTH.split(",") if x.strip())
+    
 # Middleware to check if a user is authorized
 def is_auth(user_id: int) -> bool:
     """Check if a user is in the authorized list or is the owner."""
